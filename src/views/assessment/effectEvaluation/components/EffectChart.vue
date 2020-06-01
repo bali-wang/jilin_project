@@ -28,81 +28,58 @@ export default {
           }
         },
         tooltip: {
-          trigger: "none",
           axisPointer: {
             type: "cross"
           }
         },
         grid: [
           {
-            left: 40,
-            right: 34,
-            top: 40,
-            height: "22%"
+            left: "10%",
+            right: "8%",
+            height: "6%"
           },
           {
-            left: 40,
-            right: 34,
-            top: "44%",
-            height: "42%"
+            left: "10%",
+            right: "8%",
+            bottom: "20%",
+            height: "60%"
           }
         ],
         xAxis: [
           {
             type: "category",
-            axisLine: { onZero: true }
+            data: [],
+            scale: true,
+            axisLine: { onZero: false },
+            splitLine: { show: false }
           },
-          {
-            gridIndex: 1,
-            type: "category",
-            axisLine: { onZero: true },
-            position: "top"
-          },
+          { gridIndex: 1 },
           {
             type: "category",
             gridIndex: 1,
-            axisLine: { onZero: true },
-            data: []
-          },
-          {
-            type: "category"
+            data: [],
+            scale: true,
+            axisLine: { onZero: false },
+            splitLine: { show: true }
           }
         ],
         yAxis: [
           {
-            type: "value"
+            splitArea: {
+              show: true
+            }
           },
+          {},
           {
-            type: "value",
-            inverse: true
+            gridIndex: 1
           },
-          {
-            gridIndex: 1,
-            type: "value"
-          },
-          {
-            gridIndex: 1,
-            type: "value"
-          }
+          { gridIndex: 1 }
         ],
         series: [
           {
             type: "pictorialBar",
-            yAxisIndex: 0,
-            symbolRepeat: true,
-            data: []
-          },
-          {
-            type: "pictorialBar",
-            xAxisIndex: 1,
-            symbolRepeat: true,
-            data: []
-          },
-          {
-            xAxisIndex: 2,
-            type: "pictorialBar",
-            symbolRepeat: true,
-            data: []
+            itemStyle: {},
+            symbol: "rect"
           }
         ]
       };
