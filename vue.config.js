@@ -13,17 +13,17 @@ module.exports = {
       .set("@layout", resolve("src/layout"))
       .set("@static", resolve("src/static"))
       .set("@router", resolve("src/router"));
-    // config.module
-    //   .rule("css")
-    //   .test(/\.css$/)
-    //   .oneOf("vue")
-    //   .resourceQuery(/\?vue/)
-    //   .use("px2rem")
-    //   .loader("px2rem-loader")
-    //   .options({
-    //     remUnit: 192
-    //   })
-    //   .end();
+    config.module
+      .rule("css")
+      .test(/\.css$/)
+      .oneOf("vue")
+      .resourceQuery(/\?vue/)
+      .use("px2rem")
+      .loader("px2rem-loader")
+      .options({
+        remUnit: 192
+      })
+      .end();
   },
   devServer: {
     port: 9000,

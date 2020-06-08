@@ -17,6 +17,7 @@ export default {
   watch: {
     chartData(value) {
       if (value) {
+        console.log(value);
         this.initChart();
       }
     }
@@ -25,17 +26,18 @@ export default {
     initChart() {
       const option = {
         color: [
-          "#00E300",
-          "#FFFF00",
-          "#FF7E00",
-          "#FF0000",
-          "#99004C",
-          "#7E0023"
+          "#EC5535",
+          "#F2C148",
+          "#42AFE9",
+          "#F3B7A0",
+          "#F3B7A0",
+          "#3A8671",
+          "#58CFD3"
         ],
         title: [
           {
             text: "污染物等级",
-            top: "1%",
+            top: "5%",
             left: "0%",
             textStyle: {
               fontSize: 10
@@ -59,7 +61,7 @@ export default {
           }
         ],
         legend: {
-          data: ["优", "良", "轻度污染", "中度污染", "重度污染", "严重度污染"],
+          data: ["PM2.5", "PM10", "SO2", "NO2", "CO", "O3", "无"],
           itemWidth: 18,
           itemHeight: 10,
           textStyle: {
@@ -100,6 +102,7 @@ export default {
           {
             type: "category",
             gridIndex: 0,
+            boundaryGap: true,
             max: 35,
             axisTick: {
               show: true
@@ -123,6 +126,7 @@ export default {
           },
           {
             type: "category",
+            position: "bottom",
             gridIndex: 2,
             data: this.chartData.xAxisData,
             max: 35,
@@ -134,10 +138,6 @@ export default {
             axisTick: {
               show: false
             }
-          },
-          {
-            type: "category",
-            gridIndex: 1
           }
         ],
         yAxis: [
@@ -192,53 +192,46 @@ export default {
             splitLine: {
               show: false
             }
-          },
-          {
-            type: "value"
-          },
-          {
-            type: "value",
-            gridIndex: 1
-          },
-          {
-            type: "value",
-            gridIndex: 2
           }
         ],
         series: [
           {
-            name: "优",
+            name: "PM2.5",
             type: "bar",
             stack: "one"
           },
           {
-            name: "良",
+            name: "PM10",
             type: "bar",
             stack: "one"
           },
           {
-            name: "轻度污染",
+            name: "SO2",
             type: "bar",
             stack: "one"
           },
           {
-            name: "中度污染",
+            name: "NO2",
             type: "bar",
             stack: "one"
           },
           {
-            name: "重度污染",
+            name: "CO",
             type: "bar",
             stack: "one"
           },
           {
-            name: "严重污染",
+            name: "O3",
             type: "bar",
             stack: "one"
           },
           {
-            data: this.chartData.aqiLevel1,
-            name: "人工预报",
+            name: "无",
+            type: "bar",
+            stack: "one"
+          },
+          {
+            data: this.chartData.correctPollutant1,
             xAxisIndex: 0,
             yAxisIndex: 0,
             type: "bar",
@@ -247,7 +240,7 @@ export default {
             barWidth: 12
           },
           {
-            data: this.chartData.aqiLevel2,
+            data: this.chartData.correctPollutant2,
             xAxisIndex: 0,
             yAxisIndex: 0,
             type: "bar",
@@ -256,7 +249,7 @@ export default {
             barWidth: 12
           },
           {
-            data: this.chartData.accuracyArr,
+            data: this.chartData.pollutantAccuracy,
             xAxisIndex: 1,
             yAxisIndex: 1,
             type: "pictorialBar",
@@ -264,8 +257,7 @@ export default {
             symbolOffset: [0, -6]
           },
           {
-            data: this.chartData.actualData,
-            name: "实时监测",
+            data: this.chartData.actualPollutant,
             xAxisIndex: 2,
             yAxisIndex: 2,
             barCateGoryGap: 35,

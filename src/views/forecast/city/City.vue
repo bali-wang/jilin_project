@@ -22,6 +22,7 @@
             <el-date-picker
               v-model="params.predictionTimeStr"
               type="date"
+              value-format="yyyy-MM-dd"
               placeholder="选择日期"
               size="mini"
             >
@@ -29,9 +30,10 @@
           </li>
           <li class="time_select">
             <el-select
-              v-model="options[0].value"
+              v-model="timer"
               placeholder="请选择"
               size="mini"
+              @change="handleTimeChange"
             >
               <el-option
                 v-for="item in options"
@@ -70,6 +72,19 @@
   </el-row>
 </template>
 <script>
+const getLaterDate = (currentDate, num) => {
+  const date = new Date(currentDate);
+  date.setDate(date.getDate() + num);
+  let month = date.getMonth() + 1,
+    strDate = date.getDate();
+  if (month >= 1 && month <= 9) {
+    month = "0" + month;
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = "0" + strDate;
+  }
+  return date.getFullYear() + "-" + month + "-" + strDate;
+};
 import {
   queryTree,
   cityPredictionByTimeQuery,
@@ -86,37 +101,32 @@ export default {
   },
   data() {
     return {
+      timer: "20时",
       loading: false,
       locationType: "",
       cityData: [],
       wrfData: [],
-      timer: "20时",
       options: [
         {
-          value: "1",
+          value: "08:00:00",
           label: "08时"
         },
         {
-          value: "2",
+          value: "20:00:00",
           label: "20时"
-        },
-        {
-          value: "3",
-          label: "其他"
         }
       ],
       AQIData: [],
       currentCity: "",
       params: {
-        code: "220100",
-        codeType: "citycode",
+        code: "",
+        codeType: "",
         dateType: "day",
         endTimeStr: "2020-03-30 00:00:00",
         modelName: "NAQPMS",
         predictionTimeStr: "2020-03-23 20:00:00",
         startTimeStr: "2020-03-24 00:00:00",
-        target:
-          "so2_24h,so2_24h_iaqi,co_24h,co_24h_iaqi,no2_24h,no2_24h_iaqi,pm10_24h,pm10_24h_iaqi,pm25_24h,pm25_24h_iaqi,o3_1h_max,o3_1h_max_iaqi,o3_8h_max,o3_8h_max_iaqi,aqi,primary_pollutant,aqi_level",
+        target: "",
         zoneName: "d3"
       }
     };
@@ -131,26 +141,37 @@ export default {
     }
   },
   methods: {
+    handleTimeChange(timer) {
+      const predictionTimeStr =
+        this.params.predictionTimeStr.split(" ")[0] + " " + timer;
+      const startTimeStr =
+        getLaterDate(predictionTimeStr, 1) + " " + "00:00:00";
+      const endTimeStr = getLaterDate(predictionTimeStr, 10) + " " + "00:00:00";
+      this.params = {
+        ...this.params,
+        startTimeStr,
+        endTimeStr,
+        predictionTimeStr
+      };
+      this.handleSearch(this.locationType);
+    },
     selectCity({ code, type, label }) {
       this.params.code = code;
       this.currentCity = label;
-      switch (type) {
-        case "city":
-          this.queryData(this.params);
-          this.queryWrfData(this.params);
-          break;
-        case "station":
-          this.queryStationWrf(this.params);
-          this.queryStationData(this.params);
-          break;
-      }
+      this.locationType = type;
+      this.handleSearch(type);
     },
     modeChange(mode) {
       this.params.modelName = mode;
-      this.queryData(this.params);
+      this.handleSearch(this.locationType);
     },
     async queryStationData(params) {
-      const result = await stationPredictionByTimeQuery(params);
+      const result = await stationPredictionByTimeQuery({
+        ...params,
+        modelName: params.modelName.toLowerCase(),
+        target:
+          "so2_24h,so2_24h_iaqi,co_24h,co_24h_iaqi,no2_24h,no2_24h_iaqi,pm10_24h,pm10_24h_iaqi,pm25_24h,pm25_24h_iaqi,o3_1h_max,o3_1h_max_iaqi,o3_8h_max,o3_8h_max_iaqi,aqi,primary_pollutant,aqi_level"
+      });
       this.handleResult(result);
     },
     handleResult(result) {
@@ -173,10 +194,12 @@ export default {
       });
       this.handleWrfResult(result);
     },
-    async queryData(params) {
+    async queryCityData(params) {
       const result = await cityPredictionByTimeQuery({
         ...params,
-        modelName: params.modelName.toLowerCase()
+        modelName: params.modelName.toLowerCase(),
+        target:
+          "so2_24h,so2_24h_iaqi,co_24h,co_24h_iaqi,no2_24h,no2_24h_iaqi,pm10_24h,pm10_24h_iaqi,pm25_24h,pm25_24h_iaqi,o3_1h_max,o3_1h_max_iaqi,o3_8h_max,o3_8h_max_iaqi,aqi,primary_pollutant,aqi_level"
       });
       this.handleResult(result);
     },
@@ -211,22 +234,13 @@ export default {
     handleSearch(type) {
       switch (type) {
         case "city":
-          this.queryData(this.params);
-          this.queryWrfData(this.params);
+          this.queryCityData({ ...this.params, codeType: "citycode" });
+          this.queryWrfData({ ...this.params, codeType: "citycode" });
           break;
         case "station":
-          this.queryStationData(this.params);
-          this.queryStationWrf(this.params);
+          this.queryStationData({ ...this.params, codeType: "stationcode" });
+          this.queryStationWrf({ ...this.params, codeType: "stationcode" });
           break;
-      }
-    },
-    handleWrfSearch(type) {
-      switch (type) {
-        case "city":
-          this.queryStationWrf(this.params);
-          break;
-        case "station":
-          this.queryWrfData(this.params);
       }
     }
   },

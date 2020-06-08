@@ -286,9 +286,14 @@
           width="80"
         >
           <template slot-scope="scope">
-            <el-tag color="renderColor(scope.row.aqi)">
-              {{ scope.row.aqi }}
-            </el-tag>
+            <span
+              :style="{
+                backgroundColor: renderColor(scope.row.aqi)
+              }"
+              class="subindex"
+            >
+              {{ scope.row.aqi | formatLevel }}
+            </span>
           </template>
         </el-table-column>
       </el-table>
@@ -312,8 +317,27 @@ export default {
   },
   filters: {
     formatDate(date) {
-      const newStr = date.split("T")[0];
-      return newStr;
+      if (date) {
+        const newStr = date.split("T")[0];
+        return newStr;
+      } else {
+        return " ";
+      }
+    },
+    formatLevel(value) {
+      if (value > 0 && value <= 50) {
+        return "优";
+      } else if (value > 50 && value <= 100) {
+        return "良";
+      } else if (value > 100 && value <= 150) {
+        return "轻";
+      } else if (value > 150 && value <= 200) {
+        return "中";
+      } else if (value > 200 && value <= 300) {
+        return "重";
+      } else if (value > 300) {
+        return "严重";
+      }
     }
   },
   methods: {

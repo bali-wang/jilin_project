@@ -139,7 +139,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 .date_input /deep/ .el-input__inner {
   height: 22px;
   border-radius: 0;

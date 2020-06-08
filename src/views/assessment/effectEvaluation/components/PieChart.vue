@@ -2,8 +2,8 @@
   <div>
     <div class="pie_chart" :id="id"></div>
     <div class="pie_desc">
-      <span class="evaluation_days">评估天数</span
-      ><span class="valid_days">有效天数</span>
+      <span class="evaluation_days">评估天数{{ pieData.totalDay }}</span
+      ><span class="valid_days">有效天数{{ pieData.effectDay }}</span>
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@
 export default {
   props: {
     pieData: {
-      type: Array
+      type: Object
     },
     id: {
       type: String,
@@ -19,33 +19,52 @@ export default {
       default: "chart"
     }
   },
+  watch: {
+    pieData(value) {
+      if (value) {
+        this.initChart();
+      }
+    }
+  },
   methods: {
     initChart() {
       const options = {
-        color: ["#3CA0DB", "#6CE44F", "#FCDA5C"],
+        color: this.pieData.color,
         tooltip: {
           trigger: "item",
+          textStyle: {
+            fontSize: 10
+          },
           formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
         legend: {
           orient: "horizontal",
           left: "left",
+          itemWidth: 18,
+          itemHeight: 10,
           textStyle: {
-            fontSize: 10
+            fontSize: 10,
+            fontWeight: 400
           },
-          data: ["偏低", "准确", "偏高"]
+          data: this.pieData.legendData
         },
         series: [
           {
             name: "准确率",
             type: "pie",
-            radius: "55%",
-            center: ["50%", "50%"],
-            data: [
-              { value: 335, name: "偏低" },
-              { value: 310, name: "准确" },
-              { value: 234, name: "偏高" }
-            ],
+            radius: "50%",
+            label: {
+              normal: {
+                show: true,
+                textStyle: {
+                  fontWeight: 300,
+                  fontSize: 10
+                },
+                formatter: "{d}%"
+              }
+            },
+            center: ["45%", "60%"],
+            data: this.pieData.aqiRate,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -72,6 +91,7 @@ export default {
 }
 .pie_desc {
   margin: 0 12px;
+  color: #666;
   .evaluation_days {
     margin-right: 75px;
   }

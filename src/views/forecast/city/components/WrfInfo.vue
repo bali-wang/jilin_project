@@ -55,8 +55,12 @@ export default {
   },
   filters: {
     getDate(value) {
-      const newStr = value.split("T")[0];
-      return newStr.substring(5, newStr.length);
+      if (value) {
+        const newStr = value.split("T")[0];
+        return newStr.substring(5, newStr.length);
+      } else {
+        return " ";
+      }
     }
   }
 };
